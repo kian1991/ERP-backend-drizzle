@@ -1,5 +1,6 @@
 export const ERRORS = {
   email: 'The email address is invalid, please check it.',
+  emailNotInDb: 'No Account found with this credentials.',
   zip: 'Please enter a valid zip code.',
   phone: 'Please enter a valid phone number.',
   quantity: 'The quantity must be at least 1.',

@@ -14,6 +14,12 @@ export async function getCustomer(id: number): Promise<Customer> {
   })
   return customer
 }
+export async function getCustomerByEmail(email: string): Promise<Customer> {
+  const [customer]: Awaited<Customer[]> = await db.query.customers.findMany({
+    where: eq(customers.email, email)
+  })
+  return customer
+}
 
 export async function insertCustomer(customer: NewCustomer): Promise<Customer> {
   const [inserted]: Awaited<Customer[]> = await db

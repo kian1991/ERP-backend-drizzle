@@ -5,7 +5,9 @@ import {
   warehouseRouter,
   addressRouter,
   customerRouter,
-  employeeRouter
+  employeeRouter,
+  orderRouter,
+  loginRouter
 } from './routes'
 // dotenv
 import 'dotenv/config'
@@ -21,6 +23,8 @@ app.use('/products', productRouter)
 app.use('/addresses', addressRouter)
 app.use('/customers', customerRouter)
 app.use('/employees', employeeRouter)
+app.use('/orders', orderRouter)
+app.use('/login', loginRouter)
 
 // export app for testing
 export default app
