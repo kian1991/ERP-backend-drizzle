@@ -14,6 +14,8 @@ docker-compose up -d
 npm install
 
 # Migrations ausführen
+npm run db-clean
+npm run db-generate
 npm run db-migrate
 
 # Inserts ausführen
