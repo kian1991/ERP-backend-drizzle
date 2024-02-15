@@ -1,5 +1,5 @@
 {
-  "id": "09c72e38-5ac3-4c18-b989-4806d0152637",
+  "id": "57ec59d1-c4c0-4a9a-8e96-7b7896bd5c2e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -302,7 +302,7 @@
           "name": "total_amount",
           "type": "double precision",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
@@ -369,6 +369,30 @@
         "stock_quantity": {
           "name": "stock_quantity",
           "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "brand": {
+          "name": "brand",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "category": {
+          "name": "category",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "thumbnail": {
+          "name": "thumbnail",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "images": {
+          "name": "images",
+          "type": "json",
           "primaryKey": false,
           "notNull": true
         },

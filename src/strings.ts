@@ -1,4 +1,5 @@
 export const ERRORS = {
+  invalidPage: 'The page number is invalid.',
   email: 'The email address is invalid, please check it.',
   emailNotInDb: 'No Account found with this credentials.',
   zip: 'Please enter a valid zip code.',

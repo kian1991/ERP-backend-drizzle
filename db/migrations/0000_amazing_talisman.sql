@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS "orders" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"customer_id" integer NOT NULL,
 	"status" varchar NOT NULL,
-	"total_amount" double precision NOT NULL,
+	"total_amount" double precision,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
@@ -51,6 +51,10 @@ CREATE TABLE IF NOT EXISTS "products" (
 	"description" varchar NOT NULL,
 	"price" double precision NOT NULL,
 	"stock_quantity" integer NOT NULL,
+	"brand" varchar NOT NULL,
+	"category" varchar NOT NULL,
+	"thumbnail" varchar NOT NULL,
+	"images" json NOT NULL,
 	"warehouse_id" integer,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL

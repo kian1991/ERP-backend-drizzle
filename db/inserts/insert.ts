@@ -23,14 +23,14 @@ const orderPositionData: NewOrderPosition[] = []
 const customerData: NewCustomer[] = []
 const invoiceData: NewInvoice[] = []
 
-const addressCount = 500
-const warehouseCount = 100
-const employeeCount = 50
+const addressCount = 300
+const warehouseCount = 10
+const employeeCount = 20
 const productCount = 800
-const orderCount = 1000
-const orderPositionCount = 3000
+const orderCount = 0
+const orderPositionCount = 0
 const customerCount = 200
-const invoiceCount = 1000
+const invoiceCount = 0
 // For Testing lower numbers
 // const addressCount = 5
 // const warehouseCount = 2
@@ -39,6 +39,11 @@ const invoiceCount = 1000
 // const orderCount = 10
 // const orderPositionCount = 30
 // const customerCount = 2
+
+const categories = ['phone', 'laptop', 'tablet', 'plant', 'shoe', 'camera']
+
+const THUMBNAIL_BASE_URL = 'https://source.unsplash.com/random/380x380/?'
+const IMAGES_BASE_URL = 'https://source.unsplash.com/random/1080x1080/?'
 
 // generate  addresses
 for (let i = 0; i < addressCount; i++) {
@@ -75,12 +80,23 @@ for (let i = 0; i < employeeCount; i++) {
 
 // generate products
 for (let i = 0; i < productCount; i++) {
+  const cat = categories[Math.floor(Math.random() * categories.length)]
   productData.push({
     name: faker.commerce.productName(),
     description: faker.commerce.productDescription(),
     price: faker.number.int({ min: 1, max: 1000 }),
     stockQuantity: faker.number.int({ min: 1, max: 1000 }),
-    warehouseId: faker.number.int({ min: 1, max: warehouseCount })
+    warehouseId: faker.number.int({ min: 1, max: warehouseCount }),
+    brand: faker.company.name(),
+    category: cat,
+    thumbnail: `${THUMBNAIL_BASE_URL}${cat}&${i}`,
+    images: [
+      `${IMAGES_BASE_URL}${cat}&${i}`,
+      `${IMAGES_BASE_URL}${cat}&${i + 1}`,
+      `${IMAGES_BASE_URL}${cat}&${i + 2}`,
+      `${IMAGES_BASE_URL}${cat}&${i + 3}`,
+      `${IMAGES_BASE_URL}${cat}&${i + 4}`
+    ]
   })
 }
 
@@ -134,17 +150,25 @@ console.table(orderPositionData)
 
 // inserts
 async function insert(): Promise<void> {
-  await db.insert(addresses).values(addressData).onConflictDoNothing()
-  await db.insert(warehouses).values(warehouseData).onConflictDoNothing()
-  await db.insert(customers).values(customerData).onConflictDoNothing()
-  await db.insert(employees).values(employeeData).onConflictDoNothing()
-  await db.insert(products).values(productData).onConflictDoNothing()
-  await db.insert(orders).values(orderData).onConflictDoNothing()
-  await db
-    .insert(orderPositions)
-    .values(orderPositionData)
-    .onConflictDoNothing()
-  await db.insert(invoices).values(invoiceData).onConflictDoNothing()
+  if (addressCount > 0)
+    await db.insert(addresses).values(addressData).onConflictDoNothing()
+  if (warehouseCount > 0)
+    await db.insert(warehouses).values(warehouseData).onConflictDoNothing()
+  if (customerCount > 0)
+    await db.insert(customers).values(customerData).onConflictDoNothing()
+  if (employeeCount > 0)
+    await db.insert(employees).values(employeeData).onConflictDoNothing()
+  if (productCount > 0)
+    await db.insert(products).values(productData).onConflictDoNothing()
+  if (orderCount > 0)
+    await db.insert(orders).values(orderData).onConflictDoNothing()
+  if (orderPositionCount > 0)
+    await db
+      .insert(orderPositions)
+      .values(orderPositionData)
+      .onConflictDoNothing()
+  if (invoiceCount > 0)
+    await db.insert(invoices).values(invoiceData).onConflictDoNothing()
   await queryClient.end()
 }
 

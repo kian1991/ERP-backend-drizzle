@@ -30,8 +30,13 @@ customerRouter.post('/', async (req, res) => {
 customerRouter.get('/', async (req, res) => {
   try {
     // pagination
-    const page = numeric.parse(req.query.page ?? STANDARD_PAGE)
+    const page = numeric.parse(req.query.page ?? STANDARD_PAGE) - 1
     const pageSize = numeric.parse(req.query.page_size ?? STANDARD_PAGE_SIZE)
+
+    if (page < 0) {
+      res.status(400).json({ error: { message: ERRORS.invalidPage } })
+      return
+    }
 
     const { data, totalCount } = await getCustomers({
       limit: pageSize,
@@ -39,7 +44,7 @@ customerRouter.get('/', async (req, res) => {
     })
 
     const pagination: PaginationResponse = {
-      page,
+      page: page + 1,
       pageSize,
       pageCount: Math.ceil(totalCount / pageSize),
       totalCount

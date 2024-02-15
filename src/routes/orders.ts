@@ -7,6 +7,7 @@ import { handleZodError } from '../util/zod-errorhandler'
 import { numeric } from '../util/type-conversions'
 import { STANDARD_PAGE, STANDARD_PAGE_SIZE } from '../constants'
 import { type PaginationResponse } from './types'
+import { ERRORS } from '../strings'
 
 export const orderRouter = Router()
 
@@ -23,8 +24,13 @@ orderRouter.post('/', async (req, res) => {
 orderRouter.get('/', async (req, res) => {
   try {
     // pagination
-    const page = numeric.parse(req.query.page ?? STANDARD_PAGE)
+    const page = numeric.parse(req.query.page ?? STANDARD_PAGE) - 1
     const pageSize = numeric.parse(req.query.page_size ?? STANDARD_PAGE_SIZE)
+
+    if (page < 0) {
+      res.status(400).json({ error: { message: ERRORS.invalidPage } })
+      return
+    }
 
     const { data, totalCount } = await getSalesOrders({
       limit: pageSize,
@@ -32,7 +38,7 @@ orderRouter.get('/', async (req, res) => {
     })
 
     const pagination: PaginationResponse = {
-      page,
+      page: page + 1,
       pageSize,
       pageCount: Math.ceil(totalCount / pageSize),
       totalCount

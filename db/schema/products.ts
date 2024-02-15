@@ -1,6 +1,7 @@
 import {
   doublePrecision,
   integer,
+  json,
   pgTable,
   serial,
   timestamp,
@@ -16,6 +17,10 @@ const productSchema = {
   description: varchar('description').notNull(),
   price: doublePrecision('price').notNull(),
   stockQuantity: integer('stock_quantity').notNull(),
+  brand: varchar('brand').notNull(),
+  category: varchar('category').notNull(),
+  thumbnail: varchar('thumbnail').notNull(),
+  images: json('images').notNull(),
   warehouseId: integer('warehouse_id').references(() => warehouses.id),
   createdAt: timestamp('created_at', { mode: 'date', withTimezone: false })
     .notNull()
