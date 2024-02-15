@@ -2,14 +2,11 @@
 
 import { Router } from 'express'
 import { insertSalesOrderSchema } from '../../db/schema'
-import {
-  getSalesOrder,
-  getSalesOrders,
-  getSalesOrdersFull,
-  insertSalesOrder
-} from '../controller'
+import { getSalesOrder, getSalesOrders, insertSalesOrder } from '../controller'
 import { handleZodError } from '../util/zod-errorhandler'
 import { numeric } from '../util/type-conversions'
+import { STANDARD_PAGE, STANDARD_PAGE_SIZE } from '../constants'
+import { type PaginationResponse } from './types'
 
 export const orderRouter = Router()
 
@@ -23,20 +20,27 @@ orderRouter.post('/', async (req, res) => {
   }
 })
 
-orderRouter.get('/full', async (req, res) => {
-  try {
-    const orders = await getSalesOrdersFull()
-    res.status(200).json({ data: orders })
-  } catch (error: unknown) {
-    handleZodError(error, res)
-  }
-})
-
 orderRouter.get('/', async (req, res) => {
   try {
-    const orders = await getSalesOrders()
-    res.status(200).json({ data: orders })
+    // pagination
+    const page = numeric.parse(req.query.page ?? STANDARD_PAGE)
+    const pageSize = numeric.parse(req.query.page_size ?? STANDARD_PAGE_SIZE)
+
+    const { data, totalCount } = await getSalesOrders({
+      limit: pageSize,
+      offset: page * pageSize
+    })
+
+    const pagination: PaginationResponse = {
+      page,
+      pageSize,
+      pageCount: Math.ceil(totalCount / pageSize),
+      totalCount
+    }
+
+    res.status(200).json({ pagination, data })
   } catch (error: unknown) {
+    console.error(error)
     handleZodError(error, res)
   }
 })

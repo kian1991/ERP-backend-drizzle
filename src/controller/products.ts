@@ -2,10 +2,19 @@
 import { db } from '../../db/client'
 import { products, type NewProduct, type Product } from '../../db/schema'
 import { eq } from 'drizzle-orm'
+import { getCountOfTable, type LimitOptions } from '../middleware'
 
-export async function getProducts(): Promise<Product[]> {
-  const productsResult: Awaited<Product[]> = await db.query.products.findMany()
-  return productsResult
+export async function getProducts({
+  limit,
+  offset
+}: LimitOptions): Promise<{ data: Product[]; totalCount: number }> {
+  const productsResult: Awaited<Product[]> = await db.query.products.findMany({
+    limit,
+    offset
+  })
+
+  const totalCount: number = await getCountOfTable('products')
+  return { data: productsResult, totalCount }
 }
 
 export async function getProduct(id: number): Promise<Product> {

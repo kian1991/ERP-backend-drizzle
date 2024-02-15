@@ -1,11 +1,18 @@
 import { eq } from 'drizzle-orm'
 import { db } from '../../db/client'
 import { customers, type Customer, type NewCustomer } from '../../db/schema'
+import { getCountOfTable, type LimitOptions } from '../middleware'
 
-export async function getCustomers(): Promise<Customer[]> {
+export async function getCustomers({
+  limit,
+  offset
+}: LimitOptions): Promise<{ data: Customer[]; totalCount: number }> {
   const customersResult: Awaited<Customer[]> =
     await db.query.customers.findMany()
-  return customersResult
+
+  const totalCount: number = await getCountOfTable('customers')
+
+  return { data: customersResult, totalCount }
 }
 
 export async function getCustomer(id: number): Promise<Customer> {

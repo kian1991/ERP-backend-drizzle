@@ -12,6 +12,8 @@ import {
 import { ERRORS } from '../strings'
 import { numeric } from '../util/type-conversions'
 import { handleZodError } from '../util/zod-errorhandler'
+import { STANDARD_PAGE, STANDARD_PAGE_SIZE } from '../constants'
+import { type PaginationResponse } from './types'
 
 export const customerRouter = Router()
 
@@ -27,8 +29,23 @@ customerRouter.post('/', async (req, res) => {
 
 customerRouter.get('/', async (req, res) => {
   try {
-    const customers: Customer[] = await getCustomers()
-    res.status(200).json({ data: customers })
+    // pagination
+    const page = numeric.parse(req.query.page ?? STANDARD_PAGE)
+    const pageSize = numeric.parse(req.query.page_size ?? STANDARD_PAGE_SIZE)
+
+    const { data, totalCount } = await getCustomers({
+      limit: pageSize,
+      offset: page * pageSize
+    })
+
+    const pagination: PaginationResponse = {
+      page,
+      pageSize,
+      pageCount: Math.ceil(totalCount / pageSize),
+      totalCount
+    }
+
+    res.status(200).json({ pagination, data })
   } catch (error: unknown) {
     handleZodError(error, res)
   }

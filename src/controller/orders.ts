@@ -11,9 +11,16 @@ import {
   type NewSalesOrder,
   type Order
 } from '../../db/schema'
-import type postgres from 'postgres'
+import { getCountOfTable, type LimitOptions } from '../middleware'
+import {
+  type PagedFullSalesOrderReturnType,
+  type FullSalesOrderReturnType
+} from './types'
 
-export async function insertSalesOrder(order: NewSalesOrder) {
+// insert single Sales Order
+export async function insertSalesOrder(
+  order: NewSalesOrder
+): Promise<FullSalesOrderReturnType> {
   const newOrder: NewOrder = {
     customerId: order.customerId,
     status: 'new'
@@ -82,18 +89,17 @@ export async function insertSalesOrder(order: NewSalesOrder) {
   return await getSalesOrder(orderInsertResult.id)
 }
 
-export async function getSalesOrders(): Promise<Order[]> {
-  return await db.query.orders.findMany()
-}
+// Get all Sales Orders including Positions
+export async function getSalesOrders({
+  limit,
+  offset
+}: LimitOptions): Promise<PagedFullSalesOrderReturnType> {
+  const allOrders = await db.query.orders.findMany({
+    limit,
+    offset
+  })
 
-type FullSalesOrderReturnType = Order & {
-  positions: postgres.RowList<Array<Record<string, unknown>>>
-}
-
-export async function getSalesOrdersFull(): Promise<FullSalesOrderReturnType> {
-  const allOrders = await db.query.orders.findMany()
-
-  return await Promise.all(
+  const data = await Promise.all(
     allOrders.map(async (order: Order) => {
       const prepStmt = sql`SELECT * FROM order_positions, products WHERE order_id = ${order.id} AND order_positions.product_id = products.id`
 
@@ -105,12 +111,22 @@ export async function getSalesOrdersFull(): Promise<FullSalesOrderReturnType> {
       }
     })
   )
+
+  const orderCount = await getCountOfTable('orders')
+
+  return { data, totalCount: orderCount }
 }
 
-export async function getSalesOrder(id: number) {
-  const order = await db.query.orders.findFirst({
+// Get Sales Order by ID
+export async function getSalesOrder(
+  id: number
+): Promise<FullSalesOrderReturnType> {
+  const order: Order | undefined = await db.query.orders.findFirst({
     where: eq(orders.id, id)
   })
+
+  // If Order not found throw an error
+  if (order == null) throw new Error('Order not found')
 
   const prepStmt = sql`SELECT * FROM order_positions, products WHERE order_id = ${id} AND order_positions.product_id = products.id`
 

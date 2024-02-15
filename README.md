@@ -25,6 +25,31 @@ npm run db-insert
 npm run dev
 ```
 
+## Pagination
+
+Die API unterstützt Pagination. Die Parameter `page` und `page_size` können verwendet werden, um die Ergebnisse zu paginieren.
+
+Implementierte Endpunkte für Pagination:
+
+```http
+http://localhost:5488/orders?page_size=5&page=5
+
+http://localhost:5488/products?page_size=5&page=5
+
+http://localhost:5488/customers?page_size=5&page=5
+```
+
+### Pagination Response:
+
+```json
+"pagination": {
+        "page": 5,
+        "pageSize": 5,
+        "pageCount": 200,
+        "totalCount": "1000"
+    }
+```
+
 ### order format für die API
 
 ```json
