@@ -1,30 +1,36 @@
-import { eq } from 'drizzle-orm'
+import { eq, sql } from 'drizzle-orm'
 import { db } from '../../db/client'
-import { customers, type Customer, type NewCustomer } from '../../db/schema'
+import {
+  customers,
+  type Customer,
+  type NewCustomer,
+  type Address
+} from '../../db/schema'
 import { getCountOfTable, type LimitOptions } from '../middleware'
 
-export async function getCustomers({
-  limit,
-  offset
-}: LimitOptions): Promise<{ data: Customer[]; totalCount: number }> {
-  const customersResult: Awaited<Customer[]> =
-    await db.query.customers.findMany()
+export async function getCustomers({ limit, offset }: LimitOptions): Promise<{
+  data: Array<Customer & Address>
+  totalCount: number
+}> {
+  const preparedStatement = sql`SELECT * FROM customers, addresses WHERE customers.address_id = addresses.id`
+  const customers: Awaited<Array<Customer & Address>> =
+    await db.execute(preparedStatement)
 
   const totalCount: number = await getCountOfTable('customers')
 
-  return { data: customersResult, totalCount }
+  return { data: customers, totalCount }
 }
 
 export async function getCustomer(id: number): Promise<Customer> {
-  const [customer]: Awaited<Customer[]> = await db.query.customers.findMany({
-    where: eq(customers.id, id)
-  })
+  const preparedStatement = sql`SELECT * FROM customers, addresses WHERE customers.id = ${id} AND customers.address_id = addresses.id`
+  const [customer]: Awaited<Customer[]> = await db.execute(preparedStatement)
+
   return customer
 }
 export async function getCustomerByEmail(email: string): Promise<Customer> {
-  const [customer]: Awaited<Customer[]> = await db.query.customers.findMany({
-    where: eq(customers.email, email)
-  })
+  const preparedStatement = sql`SELECT * FROM customers, addresses WHERE customers.email = ${email} AND customers.address_id = addresses.id`
+  const [customer]: Awaited<Customer[]> = await db.execute(preparedStatement)
+
   return customer
 }
 

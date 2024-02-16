@@ -9,4 +9,4 @@ if (postgresUrl === null) {
 export const POSTGRES_URL = postgresUrl
 
 export const STANDARD_PAGE_SIZE = '20'
-export const STANDARD_PAGE = '0'
+export const STANDARD_PAGE = '1'

@@ -5,7 +5,6 @@ import { z } from 'zod'
 import { db } from '../../db/client'
 import { eq } from 'drizzle-orm'
 import { customers } from '../../db/schema'
-import { handleZodError } from '../util/zod-errorhandler'
 import { ERRORS } from '../strings'
 import { getCustomerByEmail } from '../controller'
 
@@ -28,10 +27,11 @@ const emailSchema = z.object({
 loginRouter.post('/', async (req, res) => {
   try {
     const { email } = await emailSchema.parseAsync(req.body)
-    console.log('email', email)
     const userData = await getCustomerByEmail(email)
     res.status(201).json({ data: userData })
   } catch (error: unknown) {
-    handleZodError(error, res)
+    if (error instanceof z.ZodError) {
+      res.status(404).json({ error: { message: ERRORS.emailNotInDb } })
+    }
   }
 })
