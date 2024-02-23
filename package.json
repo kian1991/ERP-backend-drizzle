@@ -6,6 +6,7 @@
   "prettier": "prettier-config-standard",
   "scripts": {
     "start": "tsc && node dist/src/server.js ",
+    "build": "tsc",
     "dev": "tsx watch src/server.ts",
     "lint": "eslint . --ext .ts --cache --cache-strategy content",
     "lint-clean": "rm -rf .eslintcache && eslint . --ext .ts",
