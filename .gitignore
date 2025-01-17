@@ -2,6 +2,8 @@
 README.html
 README.pdf
 postgres-data/
+db/migrations/**
+
 
 # Logs
 logs

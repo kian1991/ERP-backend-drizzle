@@ -42,8 +42,8 @@ const invoiceCount = 0
 
 const categories = ['phone', 'laptop', 'tablet', 'plant', 'shoe', 'camera']
 
-const THUMBNAIL_BASE_URL = 'https://source.unsplash.com/random/380x380/?'
-const IMAGES_BASE_URL = 'https://source.unsplash.com/random/1080x1080/?'
+const THUMBNAIL_BASE_URL = 'https://picsum.photos/380/380.jpg/?'
+const IMAGES_BASE_URL = 'https://picsum.photos/1080/1080.jpg/?'
 
 // generate  addresses
 for (let i = 0; i < addressCount; i++) {
